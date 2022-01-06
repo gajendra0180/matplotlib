@@ -187,17 +187,17 @@ class TickHelper:
         if self.axis is None:
             self.axis = _DummyAxis(**kwargs)
 
-    @_api.deprecated("3.5", alternative=".axis.set_view_interval")
+    @_api.deprecated("3.5", alternative="`.Axis.set_view_interval`")
     def set_view_interval(self, vmin, vmax):
         self.axis.set_view_interval(vmin, vmax)
 
-    @_api.deprecated("3.5", alternative=".axis.set_data_interval")
+    @_api.deprecated("3.5", alternative="`.Axis.set_data_interval`")
     def set_data_interval(self, vmin, vmax):
         self.axis.set_data_interval(vmin, vmax)
 
     @_api.deprecated(
         "3.5",
-        alternative=".axis.set_view_interval and .axis.set_data_interval")
+        alternative="`.Axis.set_view_interval` and `.Axis.set_data_interval`")
     def set_bounds(self, vmin, vmax):
         self.set_view_interval(vmin, vmax)
         self.set_data_interval(vmin, vmax)
@@ -664,7 +664,7 @@ class ScalarFormatter(Formatter):
         s = round(value / 10**e, 10)
         exponent = self._format_maybe_minus_and_locale("%d", e)
         significand = self._format_maybe_minus_and_locale(
-            "%d" if s % 1 == 0 else "%1.10f", s)
+            "%d" if s % 1 == 0 else "%1.10g", s)
         if e == 0:
             return significand
         elif self._useMathText or self._usetex:

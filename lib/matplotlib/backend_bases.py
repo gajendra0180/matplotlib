@@ -1650,9 +1650,13 @@ class FigureCanvasBase:
             # In case we ever move the patch to IPython and remove these APIs,
             # don't break on our side.
             return
-        rif = getattr(cls, "required_interactive_framework", None)
-        backend2gui_rif = {"qt": "qt", "gtk3": "gtk3", "gtk4": "gtk4",
-                           "wx": "wx", "macosx": "osx"}.get(rif)
+        backend2gui_rif = {
+            "qt": "qt",
+            "gtk3": "gtk3",
+            "gtk4": "gtk4",
+            "wx": "wx",
+            "macosx": "osx",
+        }.get(cls.required_interactive_framework)
         if backend2gui_rif:
             if _is_non_interactive_terminal_ipython(ip):
                 ip.enable_gui(backend2gui_rif)
@@ -1679,6 +1683,7 @@ class FigureCanvasBase:
     def blit(self, bbox=None):
         """Blit the canvas in bbox (default entire canvas)."""
 
+    @_api.deprecated("3.6", alternative="FigureManagerBase.resize")
     def resize(self, w, h):
         """
         UNUSED: Set the canvas size in pixels.
@@ -2280,8 +2285,8 @@ class FigureCanvasBase:
         """
         return rcParams['savefig.format']
 
-    @_api.deprecated(
-        "3.4", alternative="manager.get_window_title or GUI-specific methods")
+    @_api.deprecated("3.4", alternative="`.FigureManagerBase.get_window_title`"
+                     " or GUI-specific methods")
     def get_window_title(self):
         """
         Return the title text of the window containing the figure, or None
@@ -2290,8 +2295,8 @@ class FigureCanvasBase:
         if self.manager is not None:
             return self.manager.get_window_title()
 
-    @_api.deprecated(
-        "3.4", alternative="manager.set_window_title or GUI-specific methods")
+    @_api.deprecated("3.4", alternative="`.FigureManagerBase.set_window_title`"
+                     " or GUI-specific methods")
     def set_window_title(self, title):
         """
         Set the title text of the window containing the figure.  Note that
@@ -3223,7 +3228,7 @@ class NavigationToolbar2:
         """Save the current figure."""
         raise NotImplementedError
 
-    @_api.deprecated("3.5", alternative="canvas.set_cursor")
+    @_api.deprecated("3.5", alternative="`.FigureCanvasBase.set_cursor`")
     def set_cursor(self, cursor):
         """
         Set the current cursor to one of the :class:`Cursors` enums values.

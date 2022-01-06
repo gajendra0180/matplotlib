@@ -180,8 +180,8 @@ class SubplotParams:
 
 class FigureBase(Artist):
     """
-    Base class for `.figure.Figure` and `.figure.SubFigure` containing the
-    methods that add artists to the figure or subfigure, create Axes, etc.
+    Base class for `.Figure` and `.SubFigure` containing the methods that add
+    artists to the figure or subfigure, create Axes, etc.
     """
     def __init__(self, **kwargs):
         super().__init__()
@@ -203,7 +203,7 @@ class FigureBase(Artist):
         self.figure = self
         # list of child gridspecs for this figure
         self._gridspecs = []
-        self._localaxes = _AxesStack()  # track all axes and current axes
+        self._localaxes = []  # track all axes
         self.artists = []
         self.lines = []
         self.patches = []
@@ -229,7 +229,7 @@ class FigureBase(Artist):
         artists = sorted(
             (artist for artist in artists if not artist.get_animated()),
             key=lambda artist: artist.get_zorder())
-        for ax in self._localaxes.as_list():
+        for ax in self._localaxes:
             locator = ax.get_axes_locator()
             if locator:
                 pos = locator(ax, renderer)
@@ -294,7 +294,7 @@ class FigureBase(Artist):
         """Get a list of artists contained in the figure."""
         return [self.patch,
                 *self.artists,
-                *self._localaxes.as_list(),
+                *self._localaxes,
                 *self.lines,
                 *self.patches,
                 *self.texts,
@@ -776,7 +776,8 @@ default: %(va)s
     def _add_axes_internal(self, ax, key):
         """Private helper for `add_axes` and `add_subplot`."""
         self._axstack.add(ax)
-        self._localaxes.add(ax)
+        if ax not in self._localaxes:
+            self._localaxes.append(ax)
         self.sca(ax)
         ax._remove_method = self.delaxes
         # this is to support plt.subplot's re-selection logic
@@ -1009,7 +1010,7 @@ default: %(va)s
         To make a legend for all artists on all Axes, call this function with
         an iterable of strings, one for each legend item. For example::
 
-            fig, (ax1, ax2)  = plt.subplots(1, 2)
+            fig, (ax1, ax2) = plt.subplots(1, 2)
             ax1.plot([1, 3, 5], color='blue')
             ax2.plot([2, 4, 6], color='red')
             fig.legend(['the blues', 'the reds'])
@@ -1129,15 +1130,7 @@ default: %(va)s
             self, mappable, cax=None, ax=None, use_gridspec=True, **kwargs):
         """%(colorbar_doc)s"""
         if ax is None:
-            ax = self.gca()
-            if (hasattr(mappable, "axes") and ax is not mappable.axes
-                    and cax is None):
-                _api.warn_deprecated(
-                    "3.4", message="Starting from Matplotlib 3.6, colorbar() "
-                    "will steal space from the mappable's axes, rather than "
-                    "from the current axes, to place the colorbar.  To "
-                    "silence this warning, explicitly pass the 'ax' argument "
-                    "to colorbar().")
+            ax = getattr(mappable, "axes", self.gca())
 
         # Store the value of gca so that we can set it back later on.
         if cax is None:
@@ -1453,8 +1446,7 @@ default: %(va)s
 
     def add_subfigure(self, subplotspec, **kwargs):
         """
-        Add a `~.figure.SubFigure` to the figure as part of a subplot
-        arrangement.
+        Add a `.SubFigure` to the figure as part of a subplot arrangement.
 
         Parameters
         ----------
@@ -1464,12 +1456,12 @@ default: %(va)s
 
         Returns
         -------
-        `.figure.SubFigure`
+        `.SubFigure`
 
         Other Parameters
         ----------------
         **kwargs
-            Are passed to the `~.figure.SubFigure` object.
+            Are passed to the `.SubFigure` object.
 
         See Also
         --------
@@ -1964,7 +1956,7 @@ class SubFigure(FigureBase):
         """
         Parameters
         ----------
-        parent : `.figure.Figure` or `.figure.SubFigure`
+        parent : `.Figure` or `.SubFigure`
             Figure or subfigure that contains the SubFigure.  SubFigures
             can be nested.
 
@@ -2090,14 +2082,14 @@ class SubFigure(FigureBase):
         List of Axes in the SubFigure.  You can access and modify the Axes
         in the SubFigure through this list.
 
-        Do not modify the list itself. Instead, use `~.SubFigure.add_axes`,
+        Modifying this list has no effect. Instead, use `~.SubFigure.add_axes`,
         `~.SubFigure.add_subplot` or `~.SubFigure.delaxes` to add or remove an
         Axes.
 
         Note: The `.SubFigure.axes` property and `~.SubFigure.get_axes` method
         are equivalent.
         """
-        return self._localaxes.as_list()
+        return self._localaxes[:]
 
     get_axes = axes.fget
 

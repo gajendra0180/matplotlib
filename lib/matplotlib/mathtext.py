@@ -179,7 +179,7 @@ class MathtextBackendAgg(MathtextBackend):
         return backend_agg.get_hinting_flag()
 
 
-@_api.deprecated("3.4", alternative="mathtext.math_to_image")
+@_api.deprecated("3.4", alternative="`.mathtext.math_to_image`")
 class MathtextBackendBitmap(MathtextBackendAgg):
     def get_results(self, box, used_characters):
         ox, oy, width, height, depth, image, characters = \
@@ -187,7 +187,7 @@ class MathtextBackendBitmap(MathtextBackendAgg):
         return image, depth
 
 
-@_api.deprecated("3.4", alternative="MathtextBackendPath")
+@_api.deprecated("3.4", alternative="`.MathtextBackendPath`")
 class MathtextBackendPs(MathtextBackend):
     """
     Store information to write a mathtext rendering to the PostScript backend.
@@ -231,7 +231,7 @@ class MathtextBackendPs(MathtextBackend):
                               used_characters)
 
 
-@_api.deprecated("3.4", alternative="MathtextBackendPath")
+@_api.deprecated("3.4", alternative="`.MathtextBackendPath`")
 class MathtextBackendPdf(MathtextBackend):
     """Store information to write a mathtext rendering to the PDF backend."""
 
@@ -263,7 +263,7 @@ class MathtextBackendPdf(MathtextBackend):
                                used_characters)
 
 
-@_api.deprecated("3.4", alternative="MathtextBackendPath")
+@_api.deprecated("3.4", alternative="`.MathtextBackendPath`")
 class MathtextBackendSvg(MathtextBackend):
     """
     Store information to write a mathtext rendering to the SVG
@@ -324,7 +324,7 @@ class MathtextBackendPath(MathtextBackend):
                             self.rects)
 
 
-@_api.deprecated("3.4", alternative="MathtextBackendPath")
+@_api.deprecated("3.4", alternative="`.MathtextBackendPath`")
 class MathtextBackendCairo(MathtextBackend):
     """
     Store information to write a mathtext rendering to the Cairo
@@ -457,7 +457,7 @@ class MathTextParser:
         font_output.set_canvas_size(box.width, box.height, box.depth)
         return font_output.get_results(box)
 
-    @_api.deprecated("3.4", alternative="mathtext.math_to_image")
+    @_api.deprecated("3.4", alternative="`.mathtext.math_to_image`")
     def to_mask(self, texstr, dpi=120, fontsize=14):
         r"""
         Convert a mathtext string to a grayscale array and depth.
@@ -483,7 +483,7 @@ class MathTextParser:
         ftimage, depth = self.parse(texstr, dpi=dpi, prop=prop)
         return np.asarray(ftimage), depth
 
-    @_api.deprecated("3.4", alternative="mathtext.math_to_image")
+    @_api.deprecated("3.4", alternative="`.mathtext.math_to_image`")
     def to_rgba(self, texstr, color='black', dpi=120, fontsize=14):
         r"""
         Convert a mathtext string to an RGBA array and depth.
@@ -512,7 +512,7 @@ class MathTextParser:
         rgba[:, :, 3] = alpha
         return rgba, depth
 
-    @_api.deprecated("3.4", alternative="mathtext.math_to_image")
+    @_api.deprecated("3.4", alternative="`.mathtext.math_to_image`")
     def to_png(self, filename, texstr, color='black', dpi=120, fontsize=14):
         r"""
         Render a tex expression to a PNG file.
@@ -540,7 +540,7 @@ class MathTextParser:
         Image.fromarray(rgba).save(filename, format="png")
         return depth
 
-    @_api.deprecated("3.4", alternative="mathtext.math_to_image")
+    @_api.deprecated("3.4", alternative="`.mathtext.math_to_image`")
     def get_depth(self, texstr, dpi=120, fontsize=14):
         r"""
         Get the depth of a mathtext string.
@@ -563,7 +563,8 @@ class MathTextParser:
         return depth
 
 
-def math_to_image(s, filename_or_obj, prop=None, dpi=None, format=None):
+def math_to_image(s, filename_or_obj, prop=None, dpi=None, format=None,
+                  *, color=None):
     """
     Given a math expression, renders it in a closely-clipped bounding
     box to an image file.
@@ -582,6 +583,8 @@ def math_to_image(s, filename_or_obj, prop=None, dpi=None, format=None):
     format : str, optional
         The output format, e.g., 'svg', 'pdf', 'ps' or 'png'.  If not set, the
         format is determined as for `.Figure.savefig`.
+    color : str, optional
+        Foreground color, defaults to :rc:`text.color`.
     """
     from matplotlib import figure
 
@@ -589,7 +592,7 @@ def math_to_image(s, filename_or_obj, prop=None, dpi=None, format=None):
     width, height, depth, _, _ = parser.parse(s, dpi=72, prop=prop)
 
     fig = figure.Figure(figsize=(width / 72.0, height / 72.0))
-    fig.text(0, depth/height, s, fontproperties=prop)
+    fig.text(0, depth/height, s, fontproperties=prop, color=color)
     fig.savefig(filename_or_obj, dpi=dpi, format=format)
 
     return depth

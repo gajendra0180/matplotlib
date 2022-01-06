@@ -1072,7 +1072,7 @@ class _AxesBase(martist.Artist):
         """
         Reset the active position to the original position.
 
-        This resets the a possible position change due to aspect constraints.
+        This resets the possible position change due to aspect constraints.
         For an explanation of the positions see `.set_position`.
         """
         for ax in self._twinned_axes.get_siblings(self):
@@ -1467,7 +1467,7 @@ class _AxesBase(martist.Artist):
 
     @property
     def texts(self):
-        return self.ArtistList(self, 'texts', 'add_text',
+        return self.ArtistList(self, 'texts', 'add_artist',
                                valid_types=mtext.Text)
 
     def clear(self):

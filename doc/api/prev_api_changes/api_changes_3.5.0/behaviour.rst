@@ -235,13 +235,13 @@ yet parsed, but this is a prerequisite for implementing subsetting.
 3D contourf polygons placed between levels
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The polygons used in a 3D `~mpl_toolkits.mplot3d.Axes3D.contourf` plot are now
+The polygons used in a 3D `~.Axes3D.contourf` plot are now
 placed halfway between the contour levels, as each polygon represents the
 location of values that lie between two levels.
 
 ``AxesDivider`` now defaults to rcParams-specified pads
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-`.AxesDivider.append_axes`, `.AxesDivider.new_horizontal`, and
-`.AxesDivider.new_vertical` now default to paddings specified by
+`.AxesDivider.append_axes`, ``AxesDivider.new_horizontal``, and
+``AxesDivider.new_vertical`` now default to paddings specified by
 :rc:`figure.subplot.wspace` and :rc:`figure.subplot.hspace` rather than zero.
